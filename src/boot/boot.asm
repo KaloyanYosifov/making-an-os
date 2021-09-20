@@ -9,7 +9,7 @@ _start:
     nop
 
  times 33 db 0
- 
+
 start:
     jmp 0:step2
 
@@ -59,19 +59,67 @@ gdt_end:
 gdt_descriptor:
     dw gdt_end - gdt_start-1
     dd gdt_start
- 
+
 [BITS 32]
 load32:
-    mov ax, DATA_SEG
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-    mov ebp, 0x00200000
-    mov esp, ebp
-    jmp $
+    mov eax, 1
+    mov ecx, 100
+    mov edi, 0x0100000
 
+    call ata_lba_read
+    jmp CODE_SEG:0x0100000
+
+ata_lba_read:
+    mov ebx, eax ; backup eax
+    ; shift 24 bits to get the 8 high bits
+    shr eax, 24
+    or eax, 0xE0 ; Select master drive
+    mov dx, 0x1F6
+    out dx, al
+
+    ; Send total sectors to read
+    mov eax, ecx
+    mov dx, 0x1F2
+    out dx, al
+    ; Finish sending
+
+    mov eax, ebx
+    mov dx, 0x1F3
+    out dx, al
+
+    mov eax, ebx
+    mov dx, 0x1F4
+    shr eax, 8
+    out dx, al
+
+    mov eax, ebx
+    mov dx, 0x1F5
+    shr eax, 16
+    out dx, al
+
+    mov dx, 0x1F7
+    mov al, 0x20
+    out dx, al
+
+.next_sector:
+    push ecx
+
+.try_again:
+    mov dx, 0x1F7
+    in al, dx
+    test al, 8
+    jz .try_again
+
+    ; read words from one sector (sector = 512 bytes)
+    mov ecx, 256
+    mov dx, 0x1F0
+    rep insw
+
+    pop ecx
+
+    loop .next_sector
+
+    ret
 
 times 510-($ - $$) db 0
 dw 0xAA55
