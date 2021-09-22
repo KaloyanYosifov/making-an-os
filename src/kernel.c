@@ -8,9 +8,5 @@ void kernel_start() {
     idt_init();
     init_display();
 
-    /* println("Welcome to the hood!"); */
-
     println("Welcome to me!");
-
-    /* problem(); */
 }
