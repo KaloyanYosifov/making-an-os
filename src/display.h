@@ -13,14 +13,16 @@ struct Display {
     uint16_t* video_mem;
 };
 
-struct Display create_display();
+void init_display();
 
-void clear_screen(struct Display *display);
+void set_main_display(struct Display d);
 
-void terminal_new_line(struct Display *display);
+void clear_screen();
 
-void print(struct Display *display, const char* statement);
+void terminal_new_line();
 
-void println(struct Display *display, const char* statement);
+void print(const char* statement);
+
+void println(const char* statement);
 
 #endif

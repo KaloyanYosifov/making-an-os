@@ -2,11 +2,9 @@
 #include "display.h"
 
 void kernel_start() {
-    struct Display display = create_display();
+    init_display();
 
-    clear_screen(&display);
+    println("Welcome to the hood!");
 
-    println(&display, "Welcome to the hood!");
-
-    println(&display, "Welcome to me!");
+    println("Welcome to me!");
 }
