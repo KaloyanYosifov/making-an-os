@@ -1,4 +1,5 @@
 #include "display.h"
+#include "string/string.h"
 
 struct Display display;
 const int VIDEO_MEMORY_ADDRESS = 0xB8000;
@@ -31,16 +32,6 @@ void set_main_display(struct Display d) {
     display = d;
 
     clear_screen();
-}
-
-size_t strlen(const char* statement) {
-    size_t length = 0;
-
-    while(statement[length]) {
-        length++;
-    }
-
-    return length;
 }
 
 uint16_t terminal_char(char character, char colour) {
