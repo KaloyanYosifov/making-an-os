@@ -3,6 +3,21 @@
 struct Display display;
 const int VIDEO_MEMORY_ADDRESS = 0xB8000;
 
+static inline void outb(uint16_t port, uint8_t val)
+{
+    asm volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
+}
+
+void update_cursor(int x, int y)
+{
+	uint16_t pos = y * VGA_WIDTH + x;
+
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (uint8_t) (pos & 0xFF));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
 void init_display() {
     struct Display display;
     display.current_terminal_x = 0;
@@ -61,6 +76,8 @@ void print(const char* statement) {
         display.video_mem[(display.current_terminal_y * VGA_WIDTH) + display.current_terminal_x] = terminal_char(statement[i], 15);
         display.current_terminal_x += 1;
     }
+
+    update_cursor(display.current_terminal_x, display.current_terminal_y);
 }
 
 void println(const char* statement) {
