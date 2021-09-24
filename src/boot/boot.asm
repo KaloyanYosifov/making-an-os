@@ -87,13 +87,13 @@ ata_lba_read:
     mov dx, 0x1F3
     out dx, al
 
-    mov eax, ebx
     mov dx, 0x1F4
+    mov eax, ebx
     shr eax, 8
     out dx, al
 
-    mov eax, ebx
     mov dx, 0x1F5
+    mov eax, ebx
     shr eax, 16
     out dx, al
 
