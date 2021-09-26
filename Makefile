@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/display.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/string/string.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/display.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/string/string.o ./build/io/io.asm.o ./build/io/io.o
 INCLUDE = -I./src
 FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-functions -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 COMPILER = i686-elf-gcc
@@ -40,6 +40,14 @@ all: ./bin/boot.bin ./bin/kernel.bin
 ./build/string/string.o: ./src/string/string.c
 	mkdir -p ./build/string
 	$(COMPILER) $(INCLUDES) -I./src/string $(FLAGS) -std=gnu99 -c $^ -o $@
+
+./build/io/io.asm.o: ./src/io/io.asm
+	mkdir -p ./build/io
+	nasm -f elf -g $^ -o $@
+
+./build/io/io.o: ./src/io/io.c
+	mkdir -p ./build/io
+	$(COMPILER) $(INCLUDES) -I./src/io $(FLAGS) -std=gnu99 -c $^ -o $@
 
 clean:
 	rm -f ./bin/*.bin
